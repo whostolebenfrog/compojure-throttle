@@ -1,0 +1,5 @@
+*.swp
+.lein*
+lib/*
+target/*
+pom*
