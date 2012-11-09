@@ -1,8 +1,7 @@
 # Compojure-throttle
 
 A Clojure Compojure middleware library for limiting the rate at which a user
-can access a resource. Going over this rate will return a 420 response (a non-standard
-http response code used by twitter to signal rate limiting)
+can access a resource. Going over this rate will return an error response.
 
 ## Usage
 
@@ -40,18 +39,18 @@ unique user id and that we want to throttle based on this.
 To configure the rate at which we throttle use two environment variables:
 
     COMPOJURE_THROTTLE_TTL=1000
-    COMPOJURE_THROTTLE_TOKENS=5
+    COMPOJURE_THROTTLE_TOKENS=3
 
 TTL defines the period for which we are throttling e.g. 1000 milliseconds
 TOKENS defines the number of tries a user is allowed within that period.
-For example we might allow 5 responses a second.
+For example we might allow 3 responses a second.
 
 This (token-bucket) approach allows us to handle small bursts in traffic without
 throttling whilst still throttling sustained high traffic.
 
 We can also configure the response code for throttled requests using:
 
-    COMPOJURE_THROTTLE_RESPONSE_CODE
+    COMPOJURE_THROTTLE_RESPONSE_CODE=420
 
 # Building #
 
