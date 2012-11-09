@@ -6,7 +6,8 @@
 
 (def ^:private defaults
   {:compojure-throttle-ttl    1000
-   :compojure-throttle-tokens 3})
+   :compojure-throttle-tokens 3
+   :compojure-throttle-response-code 420})
 
 (defn- prop
   [key]
@@ -57,7 +58,8 @@ the request as its single argument"
 ([handler finder]
    (fn [req]
      (if (throttle? (finder req))
-       {:status 420 :body "You have sent too many requests. Please wait before retrying."}
+       {:status (prop :compojure-throttle-response-code)
+        :body "You have sent too many requests. Please wait before retrying."}
        (handler req))))
 ([handler]
    (throttle handler by-ip)))
