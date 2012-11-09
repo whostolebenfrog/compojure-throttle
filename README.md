@@ -1,15 +1,67 @@
 # compojure-throttle
 
 A Clojure Compojure middleware library for limiting the rate at which a user
-can access a resource. Going over this rate will return a 420 (a non-standard
+can access a resource. Going over this rate will return a 420 response (a non-standard
 http response code used by twitter to signal rate limiting)
 
 ## Usage
 
-FIXME
+TODO - clojars
+
+(:require [compojure-throttle.core :as throttler])
+
+Then add to your middleware stack
+
+    (def app
+      (handler/site
+       throttler/throttle
+       main-routes))
+
+or add to a specific route
+
+    (defroutes main-routes
+
+      (throttler/throttle
+        (POST "/data" req "OK")))
+
+By default compojure-throttle throttles on IP. You can also pass an optional function
+that allows it to throttle based on other attributes. This function should accept a
+single argument (the request) and return a token that uniquely identifies the attribute you wish to throttle on.
+
+For example, let's assume we have a :user entry in our request map that contains a
+unique user id and that we want to throttle based on this.
+
+    (throttler/throttle (fn [req] (:user req)) ...)
+
+To configure the rate at which we throttle use two environment variables:
+
+    COMPOJURE_THROTTLE_TTL
+    COMPOJURE_THROTTLE_TOKENS
+
+TTL defines the period for which we are throttling e.g. 1 minute
+TOKENS defines the number of tries a user is allowed within that period.
+
+This (token-bucket) approach allows us to handle small bursts in traffic without
+throttling whilst still throttling sustained high traffic.
+
+We can also configure the response code for throttled requests using:
+
+    COMPOJURE_THROTTLE_RESPONSE_CODE
+
+# Building #
+
+`lein jar`
+
+# Testing #
+
+`lein midje`
+
+# Author #
+
+Benjamin Griffiths (whostolebenfrog)
 
 ## License
 
-Copyright © 2012 FIXME
+Copyright © 2012 Ben Griffiths
 
 Distributed under the Eclipse Public License, the same as Clojure.
