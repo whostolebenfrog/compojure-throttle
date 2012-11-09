@@ -1,4 +1,4 @@
-# compojure-throttle
+# Compojure-throttle
 
 A Clojure Compojure middleware library for limiting the rate at which a user
 can access a resource. Going over this rate will return a 420 response (a non-standard
@@ -8,7 +8,7 @@ http response code used by twitter to signal rate limiting)
 
 TODO - clojars
 
-(:require [compojure-throttle.core :as throttler])
+`(:require [compojure-throttle.core :as throttler])
 
 Then add to your middleware stack
 
