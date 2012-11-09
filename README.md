@@ -35,11 +35,12 @@ unique user id and that we want to throttle based on this.
 
 To configure the rate at which we throttle use two environment variables:
 
-    COMPOJURE_THROTTLE_TTL
-    COMPOJURE_THROTTLE_TOKENS
+    COMPOJURE_THROTTLE_TTL=1000
+    COMPOJURE_THROTTLE_TOKENS=5
 
-TTL defines the period for which we are throttling e.g. 1 minute
+TTL defines the period for which we are throttling e.g. 1000 milliseconds
 TOKENS defines the number of tries a user is allowed within that period.
+For example we might allow 5 responses a second.
 
 This (token-bucket) approach allows us to handle small bursts in traffic without
 throttling whilst still throttling sustained high traffic.
@@ -50,11 +51,11 @@ We can also configure the response code for throttled requests using:
 
 # Building #
 
-`lein jar`
+    lein jar
 
 # Testing #
 
-`lein midje`
+    lein midje
 
 # Author #
 
