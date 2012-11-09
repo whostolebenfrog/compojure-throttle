@@ -7,7 +7,7 @@ can access a resource. Going over this rate will return an error response.
 
 Dependency via [cloars](https://clojars.org/compojure-throttle)
 
-    https://clojars.org/compojure-throttle
+    [compojure-throttle "0.1.0"]
 
 Then use with 
 
