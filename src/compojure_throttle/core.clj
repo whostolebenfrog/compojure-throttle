@@ -3,7 +3,7 @@
             [environ.core :refer [env]]))
 
 (def defaults
-  {:compojure-throttle-ttl    60000
+  {:compojure-throttle-ttl    1000
    :compojure-throttle-tokens 3})
 
 (defn- prop
@@ -14,16 +14,20 @@
 (def requests (atom
                (cache/ttl-cache-factory {} :ttl (prop :compojure-throttle-ttl))))
 
+(defn- update-cache
+  [id tokens]
+  (reset! requests (cache/miss @requests id tokens)))
+
 (defn- throttle?
-  [ip]
-  (if (cache/has? @requests ip)
-    (let [tokens (cache/lookup @requests ip)]
-      (cache/miss @requests ip (dec tokens))
+  [id]
+  (if (cache/has? @requests id)
+    (let [tokens (cache/lookup @requests id)]
+      (update-cache id (dec tokens))
       (if (pos? tokens)
         false
         true))
     (do
-      (cache/miss @requests ip (dec (prop :compojure-throttle-tokens)))
+      (update-cache id (dec (prop :compojure-throttle-tokens)))
       false)))
 
 (defn- by-ip
