@@ -11,8 +11,8 @@
   (Integer. (or (env key)
                 (defaults key))))
 
-(def requests (atom
-               (cache/ttl-cache-factory {} :ttl (prop :compojure-throttle-ttl))))
+(def requests
+  (atom (cache/ttl-cache-factory {} :ttl (prop :compojure-throttle-ttl))))
 
 (defn- update-cache
   [id tokens]
@@ -27,7 +27,7 @@
         false
         true))
     (do
-      (update-cache id (dec (prop :compojure-throttle-tokens)))
+      (update-cache id {:tokens (dec (prop :compojure-throttle-tokens))})
       false)))
 
 (defn- by-ip
