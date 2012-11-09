@@ -4,7 +4,7 @@
             [clj-time.local :as local-time]
             [clj-time.core  :as core-time]))
 
-(def defaults
+(def ^:private defaults
   {:compojure-throttle-ttl    1000
    :compojure-throttle-tokens 3})
 
@@ -13,7 +13,7 @@
   (Integer. (or (env key)
                 (defaults key))))
 
-(def requests
+(def ^:private requests
   (atom (cache/ttl-cache-factory {} :ttl (prop :compojure-throttle-ttl))))
 
 (defn- update-cache
