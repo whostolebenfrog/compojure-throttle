@@ -6,7 +6,11 @@ http response code used by twitter to signal rate limiting)
 
 ## Usage
 
-TODO - clojars
+Dependency via [cloars](https://clojars.org/compojure-throttle)
+
+    https://clojars.org/compojure-throttle
+
+Then use with 
 
     (:require [compojure-throttle.core :as throttler])
 
@@ -17,7 +21,7 @@ Then add to your middleware stack
        throttler/throttle
        main-routes))
 
-or add to a specific route
+Or add to a specific route
 
     (defroutes main-routes
 
