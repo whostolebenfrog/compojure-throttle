@@ -18,10 +18,10 @@
 (fact "The bucket refills"
       (dotimes [x 10]
         (ok-or-throttle {:remote-addr "10.0.0.3"}) => (contains {:status 200})
-        (Thread/sleep 400)))
+        (Thread/sleep 334)))
 
 (fact "Calls get throttled for custom tokens"
-      (let [handler (throttle (fn [req] {:status 200}) (fn [req] (:user req)))]
+      (let [handler (throttle (fn [req] (:user req)) (fn [req] {:status 200}))]
         (dotimes [x 3]
             (ok-or-throttle {:user "token-blah"}) => (contains {:status 200})))
       (ok-or-throttle {:user "token-blah"}) => (contains {:status 420}))

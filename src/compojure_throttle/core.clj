@@ -55,11 +55,11 @@ Optionally takes a second argument which is a function used to lookup the 'token
 that determines whether or not the request is unique. For example a function that
 returns a user token to limit by user id rather than ip. This function should accept
 the request as its single argument"
-([handler finder]
+([finder handler]
    (fn [req]
      (if (throttle? (finder req))
        {:status (prop :compojure-throttle-response-code)
         :body "You have sent too many requests. Please wait before retrying."}
        (handler req))))
 ([handler]
-   (throttle handler by-ip)))
+   (throttle by-ip handler)))
