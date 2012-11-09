@@ -1,6 +1,8 @@
 (ns compojure-throttle.core
   (:require [clojure.core.cache :as cache]
-            [environ.core :refer [env]]))
+            [environ.core :refer [env]]
+            [clj-time.local :as local-time]
+            [clj-time.core  :as core-time]))
 
 (def defaults
   {:compojure-throttle-ttl    1000
@@ -18,17 +20,28 @@
   [id tokens]
   (reset! requests (cache/miss @requests id tokens)))
 
+(defn- token-period
+  []
+  (/ (prop :compojure-throttle-ttl)
+     (prop :compojure-throttle-tokens)))
+
+(defn- record
+  [tokens]
+  {:tokens tokens
+   :datetime (local-time/local-now)})
+
 (defn- throttle?
   [id]
-  (if (cache/has? @requests id)
-    (let [tokens (cache/lookup @requests id)]
-      (update-cache id (dec tokens))
-      (if (pos? tokens)
-        false
-        true))
-    (do
-      (update-cache id {:tokens (dec (prop :compojure-throttle-tokens))})
-      false)))
+  (when-not (cache/has? @requests id)
+    (update-cache id (record (prop :compojure-throttle-tokens))))
+  (let [entry (cache/lookup @requests id)
+        spares (/ (core-time/in-msecs (core-time/interval
+                                       (:datetime entry)
+                                       (local-time/local-now)))
+                  (token-period))
+        remaining (dec (+ (:tokens entry) spares))]
+    (update-cache id (record remaining))
+    (not (pos? remaining))))
 
 (defn- by-ip
   [req]

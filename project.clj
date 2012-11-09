@@ -10,6 +10,7 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/core.cache "0.6.2"]
                  [midje "1.4.0"]
+                 [clj-time "0.4.3"]
                  [environ "0.3.0"]]
 
   :profiles {:dev {:plugins [[lein-midje "2.0.0-SNAPSHOT"]]}})
