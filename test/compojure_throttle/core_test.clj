@@ -25,3 +25,8 @@
         (dotimes [x 3]
             (ok-or-throttle {:user "token-blah"}) => (contains {:status 200})))
       (ok-or-throttle {:user "token-blah"}) => (contains {:status 420}))
+
+(fact "Calls do not get throttled when not enabled"
+      (dotimes [x 4]
+        (ok-or-throttle {:user "token-blah"}) => (contains {:status 200}))
+      (provided (enabled?) => false))

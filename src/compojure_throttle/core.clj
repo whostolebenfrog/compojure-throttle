@@ -5,9 +5,16 @@
             [clj-time.core  :as core-time]))
 
 (def ^:private defaults
-  {:compojure-throttle-ttl    1000
+  {:compojure-throttle-enabled "true"
+   :compojure-throttle-ttl    1000
    :compojure-throttle-tokens 3
    :compojure-throttle-response-code 420})
+
+(defn enabled?
+  []
+  (boolean (Boolean/valueOf
+            (or (env :compojure-throttle-enabled)
+                (defaults :compojure-throttle-enabled)))))
 
 (defn- prop
   [key]
@@ -57,7 +64,8 @@ returns a user token to limit by user id rather than ip. This function should ac
 the request as its single argument"
 ([finder handler]
    (fn [req]
-     (if (throttle? (finder req))
+     (if (and (enabled?)
+              (throttle? (finder req)))
        {:status (prop :compojure-throttle-response-code)
         :body "You have sent too many requests. Please wait before retrying."}
        (handler req))))
