@@ -1,4 +1,4 @@
-(defproject compojure-throttle "0.1.1-SNAPSHOT"
+(defproject compojure-throttle "0.1.2"
 
   :description "Throttling middleware for compojure"
 
