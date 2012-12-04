@@ -34,7 +34,7 @@ single argument (the request) and return a token that uniquely identifies the at
 For example, let's assume we have a :user entry in our request map that contains a
 unique user id and that we want to throttle based on this.
 
-    (throttler/throttle (fn [req] (:user req)) ...)
+    (throttler/throttle :user ...)
 
 To configure the rate at which we throttle use two environment variables:
 
