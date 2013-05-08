@@ -24,6 +24,11 @@
 (def ^:private requests
   (atom (cache/ttl-cache-factory {} :ttl (prop :service-compojure-throttle-ttl))))
 
+(defn reset-cache
+  "Testing helper that resets the content of the cache - should allow tests to run from a known base"
+  []
+  (reset! requests (cache/ttl-cache-factory {} :ttl (prop :service-compojure-throttle-ttl))))
+
 (defn- update-cache
   [id tokens]
   (reset! requests (cache/miss @requests id tokens)))
