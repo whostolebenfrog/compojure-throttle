@@ -48,12 +48,12 @@
   (when-not (cache/has? @requests id)
     (update-cache id (record (prop :service-compojure-throttle-tokens))))
   (let [entry (cache/lookup @requests id)
-        spares (/ (core-time/in-msecs (core-time/interval
-                                       (:datetime entry)
-                                       (local-time/local-now)))
-                  (token-period))
-        remaining (dec (+ (:tokens entry) spares))]
-    (update-cache id (record remaining))
+        spares (int (/ (core-time/in-msecs (core-time/interval
+                                            (:datetime entry)
+                                            (local-time/local-now)))
+                       (token-period)))
+        remaining (+ (:tokens entry) spares)]
+    (update-cache id (record (dec remaining)))
     (not (pos? remaining))))
 
 (defn- by-ip
