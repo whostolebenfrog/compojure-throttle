@@ -31,7 +31,7 @@
 
 (defn- update-cache
   [id tokens]
-  (reset! requests (cache/miss @requests id tokens)))
+  (swap! requests cache/miss id tokens))
 
 (defn- token-period
   []
