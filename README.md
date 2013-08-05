@@ -9,7 +9,7 @@ Requires Clojure 1.5
 
 Dependency via [cloars](https://clojars.org/compojure-throttle)
 
-    [compojure-throttle "0.1.3"]
+    [compojure-throttle "0.1.5"]
 
 Then use with 
 
