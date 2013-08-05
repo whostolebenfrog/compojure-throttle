@@ -15,7 +15,8 @@
 
               (fact "Multiple calls do get throttled"
                     (dotimes [x 3]
-                      (ok-or-throttle {:remote-addr "10.0.0.2"}) => (contains {:status 200}))
+                      (ok-or-throttle {:remote-addr "10.0.0.2"}) => (contains {:status 200})
+                      (provided (token-period) => 100000))
                     (ok-or-throttle {:remote-addr "10.0.0.2"}) => (contains {:status 420}))
 
               (fact "The bucket refills"

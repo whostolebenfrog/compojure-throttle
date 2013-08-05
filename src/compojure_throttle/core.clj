@@ -33,7 +33,7 @@
   [id tokens]
   (swap! requests cache/miss id tokens))
 
-(defn- token-period
+(defn token-period
   []
   (/ (prop :service-compojure-throttle-ttl)
      (prop :service-compojure-throttle-tokens)))
