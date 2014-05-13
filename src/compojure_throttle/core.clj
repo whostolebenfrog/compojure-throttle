@@ -8,7 +8,7 @@
   {:service-compojure-throttle-enabled "true"
    :service-compojure-throttle-ttl    1000
    :service-compojure-throttle-tokens 3
-   :service-compojure-throttle-response-code 420})
+   :service-compojure-throttle-response-code 429})
 
 (defn enabled?
   []
