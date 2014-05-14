@@ -17,7 +17,7 @@
                     (dotimes [x 3]
                       (ok-or-throttle {:remote-addr "10.0.0.2"}) => (contains {:status 200})
                       (provided (token-period) => 100000))
-                    (ok-or-throttle {:remote-addr "10.0.0.2"}) => (contains {:status 420}))
+                    (ok-or-throttle {:remote-addr "10.0.0.2"}) => (contains {:status 429}))
 
               (fact "The bucket refills"
                     (dotimes [x 10]
@@ -28,7 +28,7 @@
                     (let [handler (throttle (fn [req] (:user req)) (fn [req] {:status 200}))]
                       (dotimes [x 3]
                         (ok-or-throttle {:user "token-blah"}) => (contains {:status 200})))
-                    (ok-or-throttle {:user "token-blah"}) => (contains {:status 420}))
+                    (ok-or-throttle {:user "token-blah"}) => (contains {:status 429}))
 
               (fact "Calls do not get throttled when not enabled"
                     (dotimes [x 4]
