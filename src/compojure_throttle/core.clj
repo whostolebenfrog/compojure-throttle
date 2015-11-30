@@ -48,7 +48,7 @@
   (when-not (cache/has? @requests id)
     (update-cache id (record (prop :service-compojure-throttle-tokens))))
   (let [entry (cache/lookup @requests id)
-        spares (int (/ (core-time/in-msecs (core-time/interval
+        spares (int (/ (core-time/in-millis (core-time/interval
                                             (:datetime entry)
                                             (local-time/local-now)))
                        (token-period)))
