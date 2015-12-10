@@ -5,8 +5,6 @@ can access a resource. Going over this rate will return an error response.
 
 ## Usage
 
-Requires Clojure 1.5
-
 Dependency via [clojars](https://clojars.org/compojure-throttle)
 
     [compojure-throttle "0.1.6"]
