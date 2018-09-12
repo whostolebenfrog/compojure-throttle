@@ -1,5 +1,5 @@
 (ns compojure-throttle.core
-  (:require [clj.ip :refer [compile]]
+  (:require [clj.ip :as ip]
             [clj-time.core :as core-time]
             [clj-time.local :as local-time]
             [clojure.core.cache :as cache]
@@ -18,12 +18,12 @@
              (or (env :service-compojure-throttle-enabled)
                  (defaults :service-compojure-throttle-enabled)))))
 
-(defn- ip-subnet
+(defn- ip-lax-subnet
   []
   (or (env :service-compojure-throttle-lax-ips)
       (defaults :service-compojure-throttle-lax-ips)))
 
-(def in-subnet? (compile (ip-subnet)))
+(def in-lax-subnet? (ip/compile (ip-lax-subnet)))
 
 (defn- prop
   [key]
@@ -79,7 +79,7 @@
   ([finder handler]
    (fn [req]
      (if (and (or (enabled?)
-                  (not (in-subnet? (:remote-addr req))))
+                  (not (in-lax-subnet? (:remote-addr req))))
               (throttle? (finder req)))
        {:status (prop :service-compojure-throttle-response-code)
         :body   "You have sent too many requests. Please wait before retrying."}
