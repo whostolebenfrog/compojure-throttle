@@ -1,12 +1,13 @@
 (ns compojure-throttle.core
-  (:require [clojure.core.cache :as cache]
-            [environ.core :refer [env]]
+  (:require [clj.ip :refer [compile]]
+            [clj-time.core :as core-time]
             [clj-time.local :as local-time]
-            [clj-time.core :as core-time]))
+            [clojure.core.cache :as cache]
+            [environ.core :refer [env]]))
 
 (def ^:private defaults
   {:service-compojure-throttle-enabled       "true"
-   :service-compojure-throttle-lax-ips       "127.0.0.1"
+   :service-compojure-throttle-lax-ips       "127.0.0.1/32"
    :service-compojure-throttle-ttl           1000
    :service-compojure-throttle-tokens        3
    :service-compojure-throttle-response-code 429})
@@ -17,32 +18,12 @@
              (or (env :service-compojure-throttle-enabled)
                  (defaults :service-compojure-throttle-enabled)))))
 
-(defn- split-ip
-  [ip-range-string]
-  (->> (clojure.string/split ip-range-string #"\.")
-       (map #(clojure.string/split % #"-"))))
-
-(defn- ip-range
+(defn- ip-subnet
   []
   (or (env :service-compojure-throttle-lax-ips)
       (defaults :service-compojure-throttle-lax-ips)))
 
-(defn in-ip-range?
-  [ip-range-string ip-string]
-  (try
-    (let [ip-range (split-ip ip-range-string)
-          ip       (->> (split-ip ip-string)
-                        flatten
-                        (map #(Integer/parseInt %)))]
-      (if (= (count ip) 4)
-        (every? true?
-                (map (fn [i r]
-                       (if (= (count r) 1)
-                         (= i (Integer/parseInt (first r)))
-                         (< (Integer/parseInt (first r)) i (Integer/parseInt (second r)))))
-                     ip ip-range))
-        false))
-    (catch Exception e false)))
+(def in-subnet? (compile (ip-subnet)))
 
 (defn- prop
   [key]
@@ -98,7 +79,7 @@
   ([finder handler]
    (fn [req]
      (if (and (or (enabled?)
-                  (not (in-ip-range? (ip-range) (:remote-addr req))))
+                  (not (in-subnet? (:remote-addr req))))
               (throttle? (finder req)))
        {:status (prop :service-compojure-throttle-response-code)
         :body   "You have sent too many requests. Please wait before retrying."}
