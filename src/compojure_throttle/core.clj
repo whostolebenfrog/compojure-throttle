@@ -71,6 +71,11 @@
 
 (defn throttle
   "Throttle incoming connections from a given source. By default this is based on IP.
+
+   Throttling is controlled by both :service-compojure-throttle-enabled and 
+   :service-compojure-throttle-lax-ips. If
+   :service-compojure-throttle-enabled is false, throttling will still happen 
+   to any IP not covered by :service-compojure-throttle-lax-ips.
   
   Optionally takes a second argument which is a function used to lookup the 'token'
   that determines whether or not the request is unique. For example a function that

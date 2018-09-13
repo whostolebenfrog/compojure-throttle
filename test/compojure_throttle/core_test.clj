@@ -27,12 +27,21 @@
               (fact "Calls get throttled for custom tokens"
                     (let [handler (throttle (fn [req] (:user req)) (fn [req] {:status 200}))]
                       (dotimes [x 3]
-                        (ok-or-throttle {:user "token-blah"}) => (contains {:status 200})))
-                    (ok-or-throttle {:user "token-blah"}) => (contains {:status 429}))
+                        (handler {:user "token-blah"
+                                  :remote-addr "10.0.0.4"}) => (contains {:status 200}))
+                      (handler {:user "token-blah"
+                                :remote-addr "10.0.0.4"}) => (contains {:status 429})))
 
-              (fact "Calls do not get throttled when not enabled"
+              (fact "Calls do get throttled when not enabled, but ip not in lax subnet"
+                    (dotimes [x 3]
+                      (ok-or-throttle {:remote-addr "10.0.0.4"}) => (contains {:status 200})
+                      (provided (enabled?) => false))
+                    (ok-or-throttle {:remote-addr "10.0.0.4"}) => (contains {:status 429})
+                    (provided (enabled?) => false))
+              
+              (fact "Calls do not get throttled when not enabled and ip is in lax subnet"
                     (dotimes [x 4]
-                      (ok-or-throttle {:user "token-blah"}) => (contains {:status 200})
+                      (ok-or-throttle {:remote-addr "127.0.0.1"}) => (contains {:status 200})
                       (provided (enabled?) => false)))
 
               (fact "Reset cache resets the cache"
