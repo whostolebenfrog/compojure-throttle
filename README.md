@@ -5,9 +5,9 @@ can access a resource. Going over this rate will return an error response.
 
 ## Usage
 
-Dependency via [clojars](https://clojars.org/compojure-throttle)
+Internal artifactory
 
-    [compojure-throttle "0.1.7"]
+    [compojure-throttle "0.1.8"]
 
 Then use with 
 
@@ -38,8 +38,8 @@ unique user id and that we want to throttle based on this.
 
 To configure the rate at which we throttle use two environment variables:
 
-    COMPOJURE_THROTTLE_TTL=1000
-    COMPOJURE_THROTTLE_TOKENS=3
+    SERVICE_COMPOJURE_THROTTLE_TTL=1000
+    SERVICE_COMPOJURE_THROTTLE_TOKENS=3
 
 TTL defines the period for which we are throttling e.g. 1000 milliseconds
 TOKENS defines the number of tries a user is allowed within that period.
@@ -50,7 +50,12 @@ throttling whilst still throttling sustained high traffic.
 
 We can also configure the response code for throttled requests using:
 
-    COMPOJURE_THROTTLE_RESPONSE_CODE=420
+    SERVICE_COMPOJURE_THROTTLE_RESPONSE_CODE=420
+    
+To disable throttling set:
+   
+    SERVICE_COMPOJURE_THROTTLE_ENABLED=false
+    SERVICE_COMPOJURE_THROTTLE_LAX_IPS="subnet for disabling throttling" 
 
 # Building #
 
