@@ -53,9 +53,10 @@ We can also configure the response code for throttled requests using:
     SERVICE_COMPOJURE_THROTTLE_RESPONSE_CODE=420
     
 To disable throttling set:
-   
-    SERVICE_COMPOJURE_THROTTLE_ENABLED=false
+
     SERVICE_COMPOJURE_THROTTLE_LAX_IPS="subnet for disabling throttling" 
+    
+By default, 127.0.0.1 is not throttled.
 
 # Building #
 

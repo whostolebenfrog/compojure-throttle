@@ -1,6 +1,7 @@
 (ns compojure-throttle.core-test
-  (:require [compojure-throttle.core :refer :all])
-  (:require [midje.sweet :refer :all]))
+  (:require [clj.ip :as ip]
+            [compojure-throttle.core :refer :all]
+            [midje.sweet :refer :all]))
 
 (def ok-or-throttle
   (throttle (fn [req] {:status 200})))
@@ -27,24 +28,23 @@
               (fact "Calls get throttled for custom tokens"
                     (let [handler (throttle (fn [req] (:user req)) (fn [req] {:status 200}))]
                       (dotimes [x 3]
-                        (handler {:user "token-blah"
+                        (handler {:user        "token-blah"
                                   :remote-addr "10.0.0.4"}) => (contains {:status 200}))
-                      (handler {:user "token-blah"
+                      (handler {:user        "token-blah"
                                 :remote-addr "10.0.0.4"}) => (contains {:status 429})))
 
               (fact "Calls do get throttled when not enabled, but ip not in lax subnet"
                     (dotimes [x 3]
                       (ok-or-throttle {:remote-addr "10.0.0.4"}) => (contains {:status 200})
-                      (provided (enabled?) => false))
+                      (provided (ip-lax-subnet) => "127.0.0.1/32"))
                     (ok-or-throttle {:remote-addr "10.0.0.4"}) => (contains {:status 429})
-                    (provided (enabled?) => false))
-              
+                    (provided (ip-lax-subnet) => "127.0.0.1/32"))
+
               (fact "Calls do not get throttled when not enabled and ip is in lax subnet"
                     (dotimes [x 4]
-                      (ok-or-throttle {:remote-addr "127.0.0.1"}) => (contains {:status 200})
-                      (provided (enabled?) => false)))
+                      (ok-or-throttle {:remote-addr "127.0.0.1"}) => (contains {:status 200})))
 
               (fact "Reset cache resets the cache"
                     (dotimes [x 10]
                       (reset-cache)
-                      (ok-or-throttle {:remote-addr "10.0.0.4"}) => (contains {:status 200})))))
+                      (ok-or-throttle {:remote-addr "10.0.0.4"}) => (contains {:status 200}))))) 
