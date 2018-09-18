@@ -17,6 +17,6 @@
 
   :profiles {:dev  {:dependencies [[midje "1.8.2"]]
                     :plugins      [[lein-midje "2.0.0-SNAPSHOT"]
-                                   [lein-release "1.0.5"]]
-                    :env          {:service-compojure-throttle-lax-ips "127.0.0.1/32"}}
-             :test {:env {:service-compojure-throttle-lax-ips "127.0.0.1/32"}}})
+                                   [lein-release "1.0.5"]
+                                   [lein-environ "1.1.0"]]
+                    :env          {:service-compojure-throttle-lax-ips "127.0.0.1/32"}}})
