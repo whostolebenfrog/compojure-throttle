@@ -33,14 +33,7 @@
                       (handler {:user        "token-blah"
                                 :remote-addr "10.0.0.4"}) => (contains {:status 429})))
 
-              (fact "Calls do get throttled when not enabled, but ip not in lax subnet"
-                    (dotimes [x 3]
-                      (ok-or-throttle {:remote-addr "10.0.0.4"}) => (contains {:status 200})
-                      (provided (ip-lax-subnet) => "127.0.0.1/32"))
-                    (ok-or-throttle {:remote-addr "10.0.0.4"}) => (contains {:status 429})
-                    (provided (ip-lax-subnet) => "127.0.0.1/32"))
-
-              (fact "Calls do not get throttled when not enabled and ip is in lax subnet"
+              (fact "Calls do not get throttled when ip is in lax subnet"
                     (dotimes [x 4]
                       (ok-or-throttle {:remote-addr "127.0.0.1"}) => (contains {:status 200})))
 
