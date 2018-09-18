@@ -1,6 +1,5 @@
 (ns compojure-throttle.core-test
-  (:require [clj.ip :as ip]
-            [compojure-throttle.core :refer :all]
+  (:require [compojure-throttle.core :refer :all]
             [midje.sweet :refer :all]))
 
 (def ok-or-throttle

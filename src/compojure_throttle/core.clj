@@ -11,7 +11,7 @@
    :service-compojure-throttle-tokens        3
    :service-compojure-throttle-response-code 429})
 
-(defn ip-lax-subnet
+(defn- ip-lax-subnet
   []
   (or (env :service-compojure-throttle-lax-ips)
       (defaults :service-compojure-throttle-lax-ips)))
