@@ -6,24 +6,19 @@
             [environ.core :refer [env]]))
 
 (def ^:private defaults
-  {:service-compojure-throttle-enabled       "true"
-   :service-compojure-throttle-lax-ips       "127.0.0.1/32"
+  {:service-compojure-throttle-lax-ips       nil            ;keeping for more explicit defaults
    :service-compojure-throttle-ttl           1000
    :service-compojure-throttle-tokens        3
    :service-compojure-throttle-response-code 429})
-
-(defn enabled?
-  []
-  (boolean (Boolean/valueOf
-             (or (env :service-compojure-throttle-enabled)
-                 (defaults :service-compojure-throttle-enabled)))))
 
 (defn- ip-lax-subnet
   []
   (or (env :service-compojure-throttle-lax-ips)
       (defaults :service-compojure-throttle-lax-ips)))
 
-(def in-lax-subnet? (ip/compile (ip-lax-subnet)))
+(def in-lax-subnet? (if (ip-lax-subnet) 
+                      (ip/compile (ip-lax-subnet))
+                      (constantly false)))
 
 (defn- prop
   [key]
@@ -83,7 +78,7 @@
   the request as its single argument"
   ([finder handler]
    (fn [req]
-     (if (and (or (enabled?)
+     (if (and (or (nil? (ip-lax-subnet))
                   (not (in-lax-subnet? (:remote-addr req))))
               (throttle? (finder req)))
        {:status (prop :service-compojure-throttle-response-code)
